@@ -81,4 +81,8 @@ class Users extends Controller
     {
         //
     }
+    public function posts()
+    {
+       return $this->hasMany(Post::class);
+    }
 }

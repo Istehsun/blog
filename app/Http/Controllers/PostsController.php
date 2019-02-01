@@ -9,6 +9,14 @@ use Illuminate\Http\Request;
 class PostsController extends Controller
 {
 
+    public function __construct()
+    {
+
+        $this->middleware('auth')->except(['index','create']);
+    }
+
+
+
     public function index() {
 
     	$posts = Post::all();
@@ -18,7 +26,7 @@ class PostsController extends Controller
 
     public function show(Post $post) {
          
-         return view('post.show',compact('post'));
+         return view('post.post',compact('post'));
 
     }
 
@@ -31,15 +39,23 @@ class PostsController extends Controller
 
     public function store() {
 
-            $this->validate(request(),[
+    $this->validate(request(),[
 
-            	'title' => 'required',
-            	'body'  => 'required'
+    	'title'   => 'required',
+    	'body'    => 'required'
+    ]);
 
-            ]);
-   
    /*Post::create(request()->all());*/
-     Post::create(request(['title','body']));
-        return redirect('/');
+     /*Post::create([
+        'title'   => request('title'),
+        'body'    => request('body'),
+        'user_id' => auth()->id()
+         ]);*/
+
+     auth()->user()->publish(new post(request(['title','body'])
+    ));
+
+
+    return redirect('/');
 	}
 }
